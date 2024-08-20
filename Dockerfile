@@ -50,13 +50,14 @@ RUN \
 
 #RUN apt-get install -y gnucash
 
-RUN  echo "**** cleanup ****" && \
+RUN \
+  echo "**** cleanup ****" && \
   /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders --update-cache && \
   apt-get clean && \
   rm -rf \
     /tmp/* \
     /var/lib/apt/lists/* \
-    /var/tmp/*
+    /var/tmp/* && \
   echo "**** install gnucash ****" && \
   mkdir -p \
     /opt/gnucash && \
