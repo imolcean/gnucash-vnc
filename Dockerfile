@@ -1,13 +1,24 @@
-FROM dorowu/ubuntu-desktop-lxde-vnc:focal-lxqt
+FROM ghcr.io/linuxserver/baseimage-kasmvnc:arch
 
-# upgrade all packages
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E88979FB9B30ACF2
-RUN apt update && apt upgrade -y
+# set version label
+LABEL maintainer="Cobra1978"
 
-# install flatpack
-RUN apt install flatpak
-RUN apt install gnome-software-plugin-flatpak
-RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+# copy nginx configuration
+RUN cp /defaults/default.conf /etc/nginx/conf.d/
 
-# install GnuCash
-RUN flatpak install flathub org.gnucash.GnuCash
+# add local files
+COPY /root/defaults /
+
+RUN \
+  echo "**** install packages ****" && \
+  pacman -Syu --noconfirm && \
+  pacman -Sy gnucash mariadb-libs libdbi-drivers postgresql-libs --noconfirm && \
+  echo "**** cleanup ****" && \
+  pacman -Scc --noconfirm
+
+# ports and volumes
+EXPOSE 3000
+
+VOLUME /config
+
+HEALTHCHECK CMD curl --fail 'http://localhost:3000' || echo exit 1
