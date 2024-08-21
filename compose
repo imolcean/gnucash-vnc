@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  sandbox:
+    image: ghcr.io/imolcean/gnucash-vnc:main
+    container_name: gnucash-vnc
+    restart: unless-stopped
+    volumes:
+      - CHANGE_TO_COMPOSE_DATA_PATH/gnucash-vnc/opt:/opt
+      - CHANGE_TO_COMPOSE_DATA_PATH/gnucash-vnc/profiles:/profiles
+      - CHANGE_TO_COMPOSE_DATA_PATH/gnucash-vnc/config:/config
+      - CHANGE_TO_COMPOSE_DATA_PATH/gnucash-vnc/dev/shm:/dev/shm
+    ports:
+      - 5900:5900
+      - 6080:80
+    environment:
+      - PUID=100
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - RESOLUTION=1920x1080
+      - VNC_PASSWORD=pass
+      - HTTP_PASSWORD=pass

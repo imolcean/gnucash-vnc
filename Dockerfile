@@ -1,13 +1,12 @@
-FROM ghcr.io/linuxserver/baseimage-kasmvnc:ubuntunoble
+FROM dorowu/ubuntu-desktop-lxde-vnc:focal-lxqt
 
-ENV TITLE=GnuCash
+# upgrade all packages
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E88979FB9B30ACF2
+RUN apt update && apt upgrade -y
 
-RUN add-apt-repository --yes ppa:xtradeb/apps && \
-    apt-get update && \
-    apt-get install -yq gnome-keyring gnucash iputils-ping libdbd-sqlite3 libdbd-mysql libdbd-pgsql net-tools okular python3-gi python3-xdg gobject-introspection gir1.2-gtk-3.0 libqt5quickcontrols2-5 qtquickcontrols2-5-dev thunar && \
-    rm -rf /var/lib/apt/lists/*
+# install flatpack
+RUN apt install flatpak gnome-software-plugin-flatpak
+RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-COPY /root /
-
-EXPOSE 3000
-VOLUME /config
+# install GnuCash
+RUN flatpak install flathub org.gnucash.GnuCash
